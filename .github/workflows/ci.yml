@@ -26,8 +26,6 @@ jobs:
       - name: Install backend dependencies
         run: npm install
         working-directory: backend
-        env:
-          SHARP_IGNORE_GLOBAL_LIBVIPS: '1'
 
       - name: Run validation
         run: node scripts/validate.js
