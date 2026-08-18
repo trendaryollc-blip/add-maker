@@ -36,7 +36,6 @@
       "dest": "/frontend/public/$1.html"
     }
   ],
-  "outputDirectory": "frontend",
   "env": {
     "NODE_ENV": "production",
     "MOCK_DATA": "true"
