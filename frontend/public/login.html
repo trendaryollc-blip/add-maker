@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sign in to the OMNI Autonomous Ad Engine.">
+  <meta name="theme-color" content="#0a0a0f">
+  <link rel="icon" type="image/svg+xml" href="../src/assets/icons/favicon.svg">
+  <title>Sign in to OMNI</title>
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="stylesheet" href="../src/css/animations.css">
+  <link rel="stylesheet" href="../src/css/themes.css">
+  <link rel="stylesheet" href="../src/css/responsive.css">
+  <!-- Page-specific CSS (not in main.css) -->
+  <style>
+    .auth-logo { width: 64px; height: 64px; margin: 0 auto 1rem; border-radius: 16px; display: grid; place-items: center; font-size: 2rem; background: var(--gradient-brand); color: var(--text-on-accent); box-shadow: var(--glow-soft); }
+    .theme-corner { position: fixed; top: 1rem; right: 1rem; z-index: 10; }
+
+    @media (max-width: 480px) {
+      .auth-wrap { padding: 1rem; }
+      .auth-card { padding: 1.2rem; border-radius: 14px; }
+      .auth-logo { width: 52px; height: 52px; font-size: 1.6rem; border-radius: 12px; }
+    }
+  </style>
+</head>
+<body class="bg-grid bg-radial">
+  <div class="theme-corner">
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-sun">☀</span><span class="icon-moon">☾</span></button>
+  </div>
+
+  <div class="auth-wrap">
+    <div class="card auth-card animate-slide-up">
+      <div class="auth-logo">◈</div>
+      <h2 class="text-center">Welcome back</h2>
+      <p class="text-muted text-center text-sm mb-5">Sign in to your OMNI mission control.</p>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-control" id="email" type="email" placeholder="operator@omni.ai" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-control" id="password" type="password" placeholder="••••••••" required>
+        </div>
+        <div class="form-group flex justify-between items-center">
+          <label class="checkbox"><input type="checkbox" checked> <span>Remember me</span></label>
+          <a href="#" class="text-sm">Forgot password?</a>
+        </div>
+        <button class="btn btn-primary btn-block btn-lg" id="login-btn" type="submit">Sign in →</button>
+      </form>
+
+      <p class="text-center text-sm mt-4 text-muted">No account? <a href="#" data-route="/login">Request access</a></p>
+          </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="../src/js/config.js"></script>
+  <script src="../src/js/themes.js"></script>
+  <script src="../src/js/store.js"></script>
+  <script src="../src/js/utils/helpers.js"></script>
+  <script src="../src/js/router.js"></script>
+  <script src="../src/js/app.js"></script>
+  <script src="../src/js/pages/login.js"></script>
+</body>
+</html>

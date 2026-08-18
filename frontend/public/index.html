@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OMNI — The Autonomous Ad Engine</title>
+  <meta name="description" content="OMNI — from product to profit in 60 seconds. The world's first Autonomous Ad Engine.">
+  <meta name="theme-color" content="#0a0a0f">
+  <link rel="icon" type="image/svg+xml" href="../src/assets/icons/favicon.svg">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="stylesheet" href="../src/css/animations.css">
+  <link rel="stylesheet" href="../src/css/themes.css">
+  <link rel="stylesheet" href="../src/css/responsive.css">
+  <style>
+    /* ---- HERO ---- */
+    .hero-wrap {
+      position: relative; min-height: 92vh; display: grid; place-items: center;
+      text-align: center; overflow: hidden; padding: 3rem 0;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 860px; width: 100%; margin: 0 auto; padding: 0 1.5rem; }
+    .hero-badge { margin-bottom: 1.5rem; }
+
+    /* Animated orb */
+    .orb {
+      position: absolute; width: 520px; height: 520px; border-radius: 50%; top: 50%; left: 50%;
+      transform: translate(-50%, -50%); pointer-events: none; z-index: 0;
+      background: radial-gradient(circle, rgba(var(--accent-rgb), 0.25) 0%, rgba(var(--accent-2-rgb), 0.12) 40%, transparent 70%);
+      animation: orb-pulse 4s ease-in-out infinite alternate;
+    }
+    .orb::before {
+      content: ''; position: absolute; inset: -30px; border-radius: 50%;
+      border: 1px solid rgba(var(--accent-rgb), 0.15);
+      animation: orb-ring 6s linear infinite;
+    }
+    .orb::after {
+      content: ''; position: absolute; inset: -60px; border-radius: 50%;
+      border: 1px dashed rgba(var(--accent-2-rgb), 0.1);
+      animation: orb-ring 10s linear infinite reverse;
+    }
+    @keyframes orb-pulse {
+      0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.7; }
+      100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    }
+    @keyframes orb-ring { to { transform: rotate(360deg); } }
+
+    /* Floating particles */
+    .particles { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+    .particle {
+      position: absolute; width: 3px; height: 3px; border-radius: 50%;
+      background: var(--accent); opacity: 0;
+      animation: particle-float linear infinite;
+    }
+    @keyframes particle-float {
+      0% { opacity: 0; transform: translateY(100vh) scale(0); }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+    }
+
+    /* Hero title */
+    .hero-title {
+      font-size: clamp(2.2rem, 6vw, 4.2rem); font-weight: 800; line-height: 1.08;
+      letter-spacing: -0.03em; margin-bottom: 1rem;
+    }
+    .hero-sub { font-size: 1.15rem; color: var(--text-secondary); max-width: 520px; margin: 0 auto 2rem; }
+
+    /* ---- FLOATING CONCEPT CARDS ---- */
+    .concept-cards { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+    .concept-card {
+      position: absolute; width: 220px; padding: 1.2rem;
+      background: rgba(var(--card-bg), 0.75); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      border: 1px solid var(--border); border-radius: 14px;
+      pointer-events: auto; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .concept-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+    .concept-card.left { top: 28%; left: 3%; animation: float-card 5s ease-in-out infinite alternate; }
+    .concept-card.right { top: 35%; right: 3%; animation: float-card 6s ease-in-out infinite alternate-reverse; }
+    .concept-card .cc-icon {
+      width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center;
+      font-size: 1.1rem; margin-bottom: 0.7rem;
+    }
+    .concept-card .cc-title { font-size: 0.92rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .concept-card .cc-text { font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5; }
+    .concept-card .cc-stat { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 800; color: var(--accent); margin-top: 0.6rem; }
+    @keyframes float-card { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+
+    @media (max-width: 1100px) { .concept-card { display: none; } }
+
+    /* ---- SYSTEM STATUS BAR ---- */
+    .sys-bar {
+      display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;
+      padding: 0.7rem 1.5rem; border-radius: 999px; margin: 0 auto 2.5rem;
+      background: rgba(var(--accent-rgb), 0.06); border: 1px solid rgba(var(--accent-rgb), 0.15);
+      max-width: 600px;
+    }
+    .sys-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; color: var(--text-secondary); }
+    .sys-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px rgba(var(--success-rgb), 0.6); animation: blink 2s ease-in-out infinite; }
+    .sys-dot.warn { background: var(--warning); box-shadow: 0 0 6px rgba(var(--warning-rgb), 0.6); }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* ---- STATS ---- */
+    .stats-row { display: flex; justify-content: center; gap: clamp(1.5rem, 5vw, 4rem); flex-wrap: wrap; margin-top: 1rem; }
+    .stat { text-align: center; }
+    .stat-num {
+      display: block; font-size: 2.2rem; font-family: 'JetBrains Mono', monospace;
+      font-weight: 800; color: var(--accent); line-height: 1.1;
+    }
+    .stat-label { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem; }
+    .stat-bar { width: 100%; height: 3px; border-radius: 3px; background: var(--bg-tertiary); margin-top: 0.5rem; overflow: hidden; }
+    .stat-bar-fill { height: 100%; border-radius: 3px; background: var(--gradient-brand); width: 0; transition: width 1.5s ease; }
+
+    /* ---- PIPELINE ---- */
+    .pipeline-section { padding: 3rem 0; }
+    .pipeline-flow {
+      display: flex; align-items: stretch; gap: 0; position: relative;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .pipe-step {
+      flex: 1; position: relative; text-decoration: none; color: inherit;
+      padding: 1.8rem 1.4rem; border: 1px solid var(--border); background: var(--card-bg);
+      transition: all 0.3s ease; cursor: pointer; display: flex; flex-direction: column;
+    }
+    .pipe-step:first-child { border-radius: 16px 0 0 16px; }
+    .pipe-step:last-child { border-radius: 0 16px 16px 0; }
+    .pipe-step:not(:last-child) { border-right: none; }
+    .pipe-step:hover { background: rgba(var(--accent-rgb), 0.06); border-color: var(--accent); z-index: 2; transform: translateY(-4px); }
+    .pipe-step:hover + .pipe-step { border-left-color: var(--accent); }
+    .pipe-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800;
+      color: rgba(var(--accent-rgb), 0.15); line-height: 1; margin-bottom: 0.6rem;
+    }
+    .pipe-step:hover .pipe-num { color: rgba(var(--accent-rgb), 0.4); }
+    .pipe-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .pipe-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45; flex: 1; }
+    .pipe-arrow {
+      position: absolute; right: -12px; top: 50%; transform: translateY(-50%);
+      width: 24px; height: 24px; z-index: 3; display: grid; place-items: center;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%;
+      font-size: 0.7rem; color: var(--accent);
+    }
+    .pipe-step:last-child .pipe-arrow { display: none; }
+    .pipe-active { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--gradient-brand); border-radius: 3px; width: 0; transition: width 0.6s ease; }
+    .pipe-step:hover .pipe-active { width: 100%; }
+
+    /* ---- LIVE FEED ---- */
+    .live-feed { max-width: 1100px; margin: 0 auto; }
+    .feed-item {
+      display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--border); font-size: 0.88rem;
+      transition: background 0.2s;
+    }
+    .feed-item:hover { background: var(--hover); }
+    .feed-icon { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; font-size: 0.9rem; flex-shrink: 0; }
+    .feed-time { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted); margin-left: auto; white-space: nowrap; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 900px) {
+      .pipeline-flow { flex-direction: column; }
+      .pipe-step { border-radius: 0 !important; border-right: 1px solid var(--border) !important; border-bottom: none !important; }
+      .pipe-step:first-child { border-radius: 16px 16px 0 0 !important; }
+      .pipe-step:last-child { border-radius: 0 0 16px 16px !important; border-bottom: 1px solid var(--border) !important; }
+      .pipe-step:not(:last-child) { border-bottom: none !important; }
+      .pipe-arrow { display: none !important; }
+      .sys-bar { gap: 1rem; }
+    }
+    @media (max-width: 768px) {
+      .hero-wrap { min-height: auto; padding: 4rem 0 2rem; }
+      .hero-title { font-size: clamp(1.8rem, 8vw, 3rem); }
+      .hero-sub { font-size: 1rem; }
+      .stats-row { gap: 1.5rem; }
+      .stat-num { font-size: 1.8rem; }
+      .sys-bar { padding: 0.6rem 1rem; gap: 0.8rem; }
+      .sys-item { font-size: 0.7rem; }
+      .feed-item { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .feed-time { margin-left: 0; }
+    }
+    @media (max-width: 480px) {
+      .hero-wrap { min-height: auto; padding: 3rem 0 1.5rem; }
+      .concept-cards { display: none; }
+      .stats-row { gap: 1.2rem; flex-direction: column; align-items: center; }
+      .sys-bar { gap: 0.6rem; }
+      .sys-item { font-size: 0.65rem; }
+    }
+  </style>
+</head>
+<body class="bg-grid bg-radial">
+  <header class="topbar">
+    <a class="brand" href="index.html" data-route="/"><span class="logo">◈</span>OMNI</a>
+    <div class="actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-sun">☀</span><span class="icon-moon">☾</span></button>
+      <a class="btn btn-sm btn-accent" href="login.html" data-route="/login">Sign in</a>
+      <button class="burger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <nav class="nav" id="main-nav">
+    <a href="index.html" data-page="index" data-route="/">Dashboard</a>
+    <a href="neural-scan.html" data-page="neural-scan" data-route="/neural-scan">Neural Scan</a>
+    <a href="reality-studio.html" data-page="reality-studio" data-route="/reality-studio">Reality Studio</a>
+    <a href="ghost-users.html" data-page="ghost-users" data-route="/ghost-users">Ghost Users</a>
+    <a href="autopilot.html" data-page="autopilot" data-route="/autopilot">Autopilot</a>
+    <a href="analytics.html" data-page="analytics" data-route="/analytics">Analytics</a>
+  </nav>
+  <div class="nav-overlay"></div>
+
+  <main>
+    <!-- ======== HERO ======== -->
+    <section class="hero-wrap">
+      <div class="orb"></div>
+      <div class="particles" id="particles"></div>
+
+      <!-- Floating concept cards -->
+      <div class="concept-cards">
+        <div class="concept-card left">
+          <div class="cc-icon" style="background:rgba(var(--accent-rgb),0.12); color:var(--accent);">🧠</div>
+          <div class="cc-title">Neural Intelligence</div>
+          <div class="cc-text">AI reads emotional DNA from any product — understanding what makes people click, feel, and buy.</div>
+          <div class="cc-stat">12 signals</div>
+        </div>
+        <div class="concept-card right">
+          <div class="cc-icon" style="background:rgba(var(--accent-2-rgb),0.12); color:var(--accent-2);">🔮</div>
+          <div class="cc-title">Predictive Engine</div>
+          <div class="cc-text">Before you spend $1, OMNI simulates 500 human reactions and predicts your exact ROAS.</div>
+          <div class="cc-stat">94% accuracy</div>
+        </div>
+        <div class="concept-card left" style="top:58%; left:2%; animation-delay:1s;">
+          <div class="cc-icon" style="background:rgba(var(--success-rgb),0.12); color:var(--success);">⚡</div>
+          <div class="cc-title">Autonomous Ops</div>
+          <div class="cc-text">Self-healing campaigns that shift budget, pause losers, and scale winners — 24/7 without you.</div>
+          <div class="cc-stat">$0 waste</div>
+        </div>
+        <div class="concept-card right" style="top:62%; right:2%; animation-delay:0.5s;">
+          <div class="cc-icon" style="background:rgba(var(--warning-rgb),0.12); color:var(--warning);">🌍</div>
+          <div class="cc-title">7-Platform Reach</div>
+          <div class="cc-text">One scan. One ad. Every platform — TikTok, Meta, Google, YouTube, and more.</div>
+          <div class="cc-stat">1 click</div>
+        </div>
+      </div>
+
+      <div class="hero-content">
+        <span class="badge badge-accent hero-badge">✦ The Autonomous Ad Engine</span>
+
+        <h1 class="hero-title animate-glitch gradient-text" data-text="FROM PRODUCT TO PROFIT">FROM PRODUCT TO PROFIT</h1>
+
+        <p class="hero-sub" id="type-line">from product to profit in 60 seconds...</p>
+
+        <!-- System status -->
+        <div class="sys-bar">
+          <div class="sys-item"><span class="sys-dot"></span> Neural Scan online</div>
+          <div class="sys-item"><span class="sys-dot"></span> Reality Studio ready</div>
+          <div class="sys-item"><span class="sys-dot warn"></span> 3 campaigns active</div>
+        </div>
+
+        <div class="flex justify-center gap-3">
+          <a class="btn btn-primary btn-lg animate-hover-glow" href="neural-scan.html" data-route="/neural-scan">🎯 Scan a Product</a>
+          <a class="btn btn-accent btn-lg" href="login.html" data-route="/login">Launch OMNI</a>
+        </div>
+
+        <!-- Animated stats -->
+        <div class="stats-row">
+          <div class="stat">
+            <span class="stat-num" data-target="500">0</span>
+            <span class="stat-label">Ghost users</span>
+            <div class="stat-bar"><div class="stat-bar-fill" data-width="85"></div></div>
+          </div>
+          <div class="stat">
+            <span class="stat-num" data-target="58" data-suffix="s" data-prefix="<">&lt;60s</span>
+            <span class="stat-label">To an ad</span>
+            <div class="stat-bar"><div class="stat-bar-fill" data-width="95"></div></div>
+          </div>
+          <div class="stat">
+            <span class="stat-num" data-target="4" data-suffix="D">4D</span>
+            <span class="stat-label">Reality studio</span>
+            <div class="stat-bar"><div class="stat-bar-fill" data-width="70"></div></div>
+          </div>
+          <div class="stat">
+            <span class="stat-num" data-target="7">7</span>
+            <span class="stat-label">Platforms</span>
+            <div class="stat-bar"><div class="stat-bar-fill" data-width="60"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== PIPELINE ======== -->
+    <section class="pipeline-section container">
+      <div style="text-align:center; margin-bottom:2.5rem;">
+        <h2>The OMNI Pipeline</h2>
+        <p class="text-muted" style="max-width:500px; margin:0.5rem auto 0;">From raw product to optimized campaign in four autonomous steps.</p>
+      </div>
+
+      <div class="pipeline-flow">
+        <a class="pipe-step" href="neural-scan.html" data-route="/neural-scan">
+          <div class="pipe-num">01</div>
+          <div class="pipe-title">🧠 Neural Scan</div>
+          <div class="pipe-desc">Extract emotional DNA, competitor intel, and audience profiles from any product URL.</div>
+          <div class="pipe-active"></div>
+          <span class="pipe-arrow">→</span>
+        </a>
+        <a class="pipe-step" href="reality-studio.html" data-route="/reality-studio">
+          <div class="pipe-num">02</div>
+          <div class="pipe-title">🎨 Reality Studio</div>
+          <div class="pipe-desc">Build immersive 4D ads with AI voiceover in virtual environments.</div>
+          <div class="pipe-active"></div>
+          <span class="pipe-arrow">→</span>
+        </a>
+        <a class="pipe-step" href="ghost-users.html" data-route="/ghost-users">
+          <div class="pipe-num">03</div>
+          <div class="pipe-title">👻 Ghost Users</div>
+          <div class="pipe-desc">Validate your ad on 500 AI humans before spending a single dollar.</div>
+          <div class="pipe-active"></div>
+          <span class="pipe-arrow">→</span>
+        </a>
+        <a class="pipe-step" href="autopilot.html" data-route="/autopilot">
+          <div class="pipe-num">04</div>
+          <div class="pipe-title">⚙️ Autopilot</div>
+          <div class="pipe-desc">Self-healing campaigns that monitor, optimize, and reallocate in real time.</div>
+          <div class="pipe-active"></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ======== LIVE FEED ======== -->
+    <section class="container" style="padding-bottom:3rem;">
+      <div style="text-align:center; margin-bottom:1.5rem;">
+        <h2>Live Activity <span class="text-muted text-lg">— system feed</span></h2>
+      </div>
+      <div class="card live-feed" id="live-feed">
+        <div class="feed-item">
+          <div class="feed-icon" style="background:rgba(var(--accent-rgb),0.12); color:var(--accent);">🧠</div>
+          <div><b>Neural Scan</b> completed for "Wireless Headphones Pro" — emotional DNA mapped</div>
+          <span class="feed-time">2s ago</span>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon" style="background:rgba(var(--accent-2-rgb),0.12); color:var(--accent-2);">🎨</div>
+          <div><b>Reality Studio</b> generated 4D ad — Cyber City environment</div>
+          <span class="feed-time">18s ago</span>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon" style="background:rgba(var(--success-rgb),0.12); color:var(--success);">👻</div>
+          <div><b>Ghost Users</b> simulation done — 87% engagement, score 9.2/10</div>
+          <span class="feed-time">42s ago</span>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon" style="background:rgba(var(--warning-rgb),0.12); color:var(--warning);">⚙️</div>
+          <div><b>Autopilot</b> reallocated $120 from "FB Brand Awareness" → "TikTok Conversion"</div>
+          <span class="feed-time">1m ago</span>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon" style="background:rgba(var(--accent-rgb),0.12); color:var(--accent);">📊</div>
+          <div><b>Analytics</b> detected ROAS spike on Instagram — 4.2x vs 2.8x avg</div>
+          <span class="feed-time">3m ago</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <div class="flex justify-between items-center flex-col" style="gap:0.4rem">
+      <span>◈ OMNI — The Autonomous Ad Engine</span>
+      <span class="text-xs text-muted">Demo build · All analytics simulated</span>
+    </div>
+  </footer>
+
+  <script src="../src/js/config.js"></script>
+  <script src="../src/js/themes.js"></script>
+  <script src="../src/js/store.js"></script>
+  <script src="../src/js/utils/helpers.js"></script>
+  <script src="../src/js/modules/neural-scan.js"></script>
+  <script src="../src/js/modules/reality-studio.js"></script>
+  <script src="../src/js/modules/ghost-users.js"></script>
+  <script src="../src/js/modules/platform-alchemy.js"></script>
+  <script src="../src/js/modules/live-autopilot.js"></script>
+  <script src="../src/js/modules/phantom-checkout.js"></script>
+  <script src="../src/js/router.js"></script>
+  <script src="../src/js/mobile-menu.js"></script>
+  <script src="../src/js/settings.js"></script>
+  <script src="../src/js/app.js"></script>
+  <script src="../src/js/pages/index.js"></script>
+  <script>
+  (function(){
+    'use strict';
+
+    /* ---- Particles ---- */
+    document.addEventListener('DOMContentLoaded', function(){
+      var container = document.getElementById('particles');
+      if(!container) return;
+      for(var i=0; i<30; i++){
+        var p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random()*100 + '%';
+        p.style.animationDuration = (4 + Math.random()*8) + 's';
+        p.style.animationDelay = Math.random()*6 + 's';
+        p.style.width = p.style.height = (2 + Math.random()*3) + 'px';
+        if(Math.random()>0.5) p.style.background = 'var(--accent-2)';
+        container.appendChild(p);
+      }
+    });
+
+    /* ---- Counter animation ---- */
+    function animateCounters(){
+      document.querySelectorAll('.stat-num[data-target]').forEach(function(el){
+        var target = parseInt(el.getAttribute('data-target'), 10);
+        var prefix = el.getAttribute('data-prefix') || '';
+        var suffix = el.getAttribute('data-suffix') || '';
+        var current = 0;
+        var step = Math.max(1, Math.ceil(target / 40));
+        var timer = setInterval(function(){
+          current += step;
+          if(current >= target){ current = target; clearInterval(timer); }
+          el.textContent = prefix + current + suffix;
+        }, 30);
+      });
+      document.querySelectorAll('.stat-bar-fill[data-width]').forEach(function(el){
+        setTimeout(function(){ el.style.width = el.getAttribute('data-width') + '%'; }, 300);
+      });
+    }
+
+    /* ---- Live feed rotation ---- */
+    var feedMessages = [
+      { icon: '🧠', bg: 'accent', text: '<b>Neural Scan</b> completed for "Premium Skincare Set" — 6 emotional triggers identified' },
+      { icon: '🎨', bg: 'accent-2', text: '<b>Reality Studio</b> rendered new variant — Tropical environment, 15s cut' },
+      { icon: '👻', bg: 'success', text: '<b>Ghost Users</b> scored ad 8.7/10 — "Luxury Buyer" segment responded best' },
+      { icon: '⚙️', bg: 'warning', text: '<b>Autopilot</b> paused underperforming ad — CPC was 2.3x above target' },
+      { icon: '📊', bg: 'accent', text: '<b>Analytics</b> detected trending hook — "Stop scrolling" variant outperforming by 40%' },
+      { icon: '🧠', bg: 'accent', text: '<b>Neural Scan</b> found 3 competitor weaknesses in "Running Shoes" category' },
+      { icon: '👻', bg: 'success', text: '<b>Ghost Users</b> predicted 4.1% CTR for new video ad — above industry avg' },
+      { icon: '⚙️', bg: 'warning', text: '<b>Autopilot</b> shifted $200 budget to TikTok — ROAS improved from 2.1x to 3.4x' },
+    ];
+    var feedIndex = 0;
+    function rotateFeed(){
+      var feed = document.getElementById('live-feed');
+      if(!feed) return;
+      var msg = feedMessages[feedIndex % feedMessages.length];
+      var bgMap = { 'accent': 'rgba(var(--accent-rgb),0.12)', 'accent-2': 'rgba(var(--accent-2-rgb),0.12)', 'success': 'rgba(var(--success-rgb),0.12)', 'warning': 'rgba(var(--warning-rgb),0.12)' };
+      var colorMap = { 'accent': 'var(--accent)', 'accent-2': 'var(--accent-2)', 'success': 'var(--success)', 'warning': 'var(--warning)' };
+      var item = document.createElement('div');
+      item.className = 'feed-item';
+      item.style.opacity = '0'; item.style.transform = 'translateY(-10px)';
+      item.innerHTML = '<div class="feed-icon" style="background:' + bgMap[msg.bg] + ';color:' + colorMap[msg.bg] + ';">' + msg.icon + '</div>' +
+        '<div>' + msg.text + '</div>' +
+        '<span class="feed-time">just now</span>';
+      feed.insertBefore(item, feed.firstChild);
+      requestAnimationFrame(function(){
+        item.style.transition = 'opacity 0.4s, transform 0.4s';
+        item.style.opacity = '1'; item.style.transform = 'translateY(0)';
+      });
+      if(feed.children.length > 6) feed.removeChild(feed.lastChild);
+      feedIndex++;
+    }
+
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', function(){ animateCounters(); setInterval(rotateFeed, 5000); });
+    } else {
+      animateCounters();
+      setInterval(rotateFeed, 5000);
+    }
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | OMNI</title>
+  <meta name="description" content="Frictionless two-click checkout for OMNI ads.">
+  <meta name="theme-color" content="#0a0a0f">
+  <link rel="icon" type="image/svg+xml" href="../src/assets/icons/favicon.svg">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="stylesheet" href="../src/css/animations.css">
+  <link rel="stylesheet" href="../src/css/themes.css">
+  <link rel="stylesheet" href="../src/css/responsive.css">
+  <!-- Page-specific CSS (not in main.css) -->
+  <style>
+    .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .pay-grid { grid-template-columns: 1fr; } }
+    .card-preview { height: 150px; border-radius: 16px; padding: 1.2rem; display: flex; flex-direction: column; justify-content: space-between; background: var(--gradient-brand); color: var(--text-on-accent); }
+    .card-preview .chip { width: 34px; height: 26px; border-radius: 5px; background: rgba(255,255,255,0.35); }
+
+    @media (max-width: 768px) {
+      .checkout-page .col-span-5, .checkout-page .col-span-7 { grid-column: span 12; }
+      .card-preview { height: 130px; }
+    }
+    @media (max-width: 480px) {
+      .card-preview { height: 110px; padding: 1rem; }
+    }
+  </style>
+</head>
+<body class="bg-grid bg-radial checkout-page">
+  <header class="topbar">
+    <a class="brand" href="index.html" data-route="/"><span class="logo">◈</span>OMNI</a>
+    <div class="actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-sun">☀</span><span class="icon-moon">☾</span></button>
+      <a class="btn btn-sm btn-accent" href="login.html" data-route="/login">Sign in</a>
+      <button class="burger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <nav class="nav" id="main-nav">
+    <a href="index.html" data-page="index" data-route="/">Dashboard</a>
+    <a href="reality-studio.html" data-page="reality-studio" data-route="/reality-studio">Reality Studio</a>
+    <a href="autopilot.html" data-page="autopilot" data-route="/autopilot">Autopilot</a>
+    <a href="analytics.html" data-page="analytics" data-route="/analytics">Analytics</a>
+  </nav>
+  <div class="nav-overlay"></div>
+
+  <main class="section container">
+    <div class="grid grid-cols-12">
+      <!-- Order summary -->
+      <section class="col-span-5">
+        <span class="badge badge-success mb-3">⚡ PHANTOM CHECKOUT</span>
+        <h1 class="mb-3">Viewers → Buyers in <span class="gradient-text">two clicks.</span></h1>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><span class="icon">🛒</span> Order summary</span></div>
+          <div class="flex justify-between items-center">
+            <div>
+              <b>OMNI Pro plan</b>
+              <p class="text-xs text-muted">Full studio · 500 ghost users · autopilot</p>
+            </div>
+            <span class="text-lg mono">$149</span>
+          </div>
+          <div class="divider"></div>
+          <div class="flex justify-between items-center text-sm">
+            <span class="text-muted">Subtotal</span><span class="mono">$149.00</span>
+          </div>
+          <div class="flex justify-between items-center text-sm mt-2">
+            <span class="text-muted">Tax</span><span class="mono">$0.00</span>
+          </div>
+          <div class="divider"></div>
+          <div class="flex justify-between items-center">
+            <b>Total</b><b class="text-xl gradient-text">$149.00</b>
+          </div>
+        </div>
+        <div class="card mt-4"><div class="card-preview"><div class="chip"></div><span class="mono" id="card-preview-num">•••• •••• •••• ••••</span><span class="mono text-sm" id="card-preview-name">CARD HOLDER</span></div></div>
+        </section>
+
+      <!-- Payment form -->
+      <section class="col-span-7">
+        <div class="card">
+          <h4 class="mb-4">💳 Payment details</h4>
+          <div class="form-group">
+            <label class="form-label" for="pay-email">Email (receipt)</label>
+            <input class="form-control" id="pay-email" type="email" placeholder="buyer@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pay-name">Cardholder name</label>
+            <input class="form-control" id="pay-name" type="text" placeholder="Alex Morgan">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pay-card">Card number</label>
+            <input class="form-control" id="pay-card" type="text" inputmode="numeric" placeholder="4242 4242 4242 4242">
+            <p class="form-hint" id="card-valid"></p>
+          </div>
+          <div class="pay-grid">
+            <div class="form-group">
+              <label class="form-label" for="pay-exp">Expiry (MM/YY)</label>
+              <input class="form-control" id="pay-exp" type="text" placeholder="12/28">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pay-cvc">CVC</label>
+              <input class="form-control" id="pay-cvc" type="text" inputmode="numeric" placeholder="123">
+            </div>
+          </div>
+          <button class="btn btn-primary btn-block btn-lg" id="pay-btn">🔒 Pay $149.00</button>
+          <p class="text-center text-xs text-muted mt-3">🔐 Demo checkout — no real charge is processed.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Success modal -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal">
+      <div class="modal-header"><span class="card-title"><span class="icon">✅</span> Payment complete</span><button class="modal-close" data-close-modal>×</button></div>
+      <h2 class="gradient-text" id="order-id">ORDER</h2>
+      <p class="text-muted mt-2">Your OMNI Pro plan is active. A receipt is on its way.</p>
+      <pre class="code-block mt-4" id="receipt-body"></pre>
+      <button class="btn btn-primary btn-block mt-4" data-close-modal>Done</button>
+    </div>
+  </div>
+
+  <footer class="footer container"><span class="text-xs text-muted">Phantom Checkout · demo (PCI-compliant in production)</span></footer>
+
+  <!-- JavaScript -->
+  <script src="../src/js/config.js"></script>
+  <script src="../src/js/themes.js"></script>
+  <script src="../src/js/store.js"></script>
+  <script src="../src/js/utils/helpers.js"></script>
+  <script src="../src/js/modules/phantom-checkout.js"></script>
+  <script src="../src/js/router.js"></script>
+  <script src="../src/js/mobile-menu.js"></script>
+  <script src="../src/js/settings.js"></script>
+  <script src="../src/js/app.js"></script>
+  <script src="../src/js/pages/checkout.js"></script>
+</body>
+</html>

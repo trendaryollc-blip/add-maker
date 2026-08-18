@@ -1,0 +1,43 @@
+# ---- Dependencies -------------------------------------------------
+node_modules/
+
+# ---- Build output -------------------------------------------------
+dist/
+build/
+out/
+.vercel/
+
+# ---- Environment & secrets ----------------------------------------
+# NEVER commit real API keys. Copy .env.example -> .env instead.
+.env
+.env.local
+.env.*.local
+
+# ---- Backend local storage ----------------------------------------
+backend/storage/
+*.tmp
+
+# ---- Logs ---------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# ---- OS / editor cruft --------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*~
+.project
+.settings/
+
+# ---- IDE (keep shared settings, ignore personal ones) -------------
+.vscode/*
+!.vscode/extensions.json
+
+# ---- Test / coverage ----------------------------------------------
+coverage/
+.nyc_output/
+
+# ---- Vercel -------------------------------------------------------
+.vercel/

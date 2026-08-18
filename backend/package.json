@@ -1,0 +1,30 @@
+{
+  "name": "omni-backend",
+  "version": "2.0.0",
+  "description": "OMNI — REST API + services for the Autonomous Ad Engine. Node.js HTTP server with database, auth, AI integration, scraping, and video generation.",
+  "private": true,
+  "type": "commonjs",
+  "license": "MIT",
+  "author": "OMNI Team <team@omni.ai>",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "bcryptjs": "^2.4.3",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "fluent-ffmpeg": "^2.1.3",
+    "jsonwebtoken": "^9.0.2",
+    "openai": "^4.70.0",
+    "pg": "^8.13.0",
+    "sharp": "^0.33.0",
+    "uuid": "^10.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test tests/api.test.js",
+    "validate": "node ../scripts/validate.js"
+  }
+}

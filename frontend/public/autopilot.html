@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Autopilot | OMNI</title>
+  <meta name="description" content="A self-healing campaign management system that works while you sleep.">
+  <meta name="theme-color" content="#0a0a0f">
+  <link rel="icon" type="image/svg+xml" href="../src/assets/icons/favicon.svg">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="stylesheet" href="../src/css/animations.css">
+  <link rel="stylesheet" href="../src/css/themes.css">
+  <link rel="stylesheet" href="../src/css/responsive.css">
+  <!-- Page-specific CSS (not in main.css) -->
+  <style>
+    .autopilot-page .section { padding-top: 2rem; padding-bottom: 2rem; }
+    .autopilot-page h1 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); line-height: 1.15; margin-bottom: 0; }
+    .autopilot-page .lead { font-size: 1rem; margin-bottom: 0; }
+    .status-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-right: 0.4rem; }
+    .status-dot.healthy { background: var(--success); box-shadow: 0 0 8px rgba(var(--success-rgb), 0.6); }
+    .status-dot.stalled { background: var(--danger); box-shadow: 0 0 8px rgba(var(--danger-rgb), 0.6); }
+    .status-dot.ramping { background: var(--warning); box-shadow: 0 0 8px rgba(var(--warning-rgb), 0.6); }
+    .auto-card { height: 100%; }
+    .clickable-item { cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 8px; transition: background 0.2s, transform 0.15s; }
+    .clickable-item:hover { background: rgba(var(--accent-rgb), 0.1); transform: translateX(4px); }
+
+    @media (max-width: 768px) {
+      .autopilot-page .grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
+      .autopilot-page .grid-cols-3 { grid-template-columns: 1fr !important; }
+      .auto-card { min-width: auto !important; width: 100%; }
+    }
+    @media (max-width: 480px) {
+      .autopilot-page .grid-cols-4 { grid-template-columns: 1fr !important; }
+      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    }
+  </style>
+</head>
+<body class="bg-grid bg-radial autopilot-page">
+  <header class="topbar">
+    <a class="brand" href="index.html" data-route="/"><span class="logo">◈</span>OMNI</a>
+    <div class="actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-sun">☀</span><span class="icon-moon">☾</span></button>
+      <a class="btn btn-sm btn-accent" href="login.html" data-route="/login">Sign in</a>
+      <button class="burger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <nav class="nav" id="main-nav">
+    <a href="index.html" data-page="index" data-route="/">Dashboard</a>
+    <a href="neural-scan.html" data-page="neural-scan" data-route="/neural-scan">Neural Scan</a>
+    <a href="reality-studio.html" data-page="reality-studio" data-route="/reality-studio">Reality Studio</a>
+    <a href="ghost-users.html" data-page="ghost-users" data-route="/ghost-users">Ghost Users</a>
+    <a href="autopilot.html" data-page="autopilot" data-route="/autopilot">Autopilot</a>
+    <a href="analytics.html" data-page="analytics" data-route="/analytics">Analytics</a>
+  </nav>
+  <div class="nav-overlay"></div>
+
+  <main class="section container">
+    <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+      <div>
+        <span class="badge badge-accent mb-2">⚙️ LIVE AUTOPILOT ENGINE</span>
+        <h1>A self-healing engine that works <span class="gradient-text">while you sleep.</span></h1>
+        <p class="lead mt-1">We monitor, optimize and reallocate your budget in real time.</p>
+      </div>
+      <div class="card auto-card flex-col justify-center" style="min-width:220px">
+        <div class="flex justify-between items-center gap-4">
+          <div>
+            <h4>Autopilot</h4>
+            <p class="text-xs text-muted" id="auto-status">Paused</p>
+          </div>
+          <label class="toggle"><input type="checkbox" id="autopilot-master"><span class="slider"></span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live metrics -->
+    <div class="grid grid-cols-4" style="gap:0.75rem;">
+      <div class="card metric"><div class="metric-label">Total spend</div><div class="metric-value" id="m-spend">$—</div></div>
+      <div class="card metric"><div class="metric-label">Revenue</div><div class="metric-value up" id="m-rev">$—</div></div>
+      <div class="card metric"><div class="metric-label">ROAS</div><div class="metric-value up" id="m-roas">—</div></div>
+      <div class="card metric"><div class="metric-label">Active ads</div><div class="metric-value" id="m-ads">—</div></div>
+    </div>
+
+    <!-- Live campaigns -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <span class="card-title"><span class="icon">📊</span> Live campaigns</span>
+        <span class="badge badge-accent" id="last-updated">—</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Campaign</th><th>Platform</th><th>Budget</th><th>Spent</th><th>CTR</th><th>ROAS</th><th>Status</th></tr></thead>
+          <tbody id="campaign-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="grid grid-cols-3 mt-4">
+      <div class="card"><h4 class="mb-2">🔄 Reallocate budget</h4><p class="text-sm text-muted mb-3">Move spend away from underperformers.</p><button class="btn btn-accent btn-block" id="realloc-btn">Reallocate</button><p class="text-xs text-muted mt-2" id="realloc-result"></p></div>
+      <div class="card"><h4 class="mb-2">✨ New variant</h4><p class="text-sm text-muted mb-3">Autogenerate a fresh ad variation.</p><button class="btn btn-accent btn-block" id="variant-btn">Generate variant</button><p class="text-xs text-muted mt-2" id="variant-result"></p></div>
+      <div class="card"><h4 class="mb-2">🧾 Report</h4><p class="text-sm text-muted mb-3">Daily/weekly executive summary.</p><button class="btn btn-primary btn-block" id="report-btn">Generate report</button></div>
+    </div>
+
+    <div class="card mt-4 hidden" id="report-card">
+      <h4 class="mb-3">🧾 Autopilot report</h4>
+      <pre class="code-block" id="report-body"></pre>
+    </div>
+  </main>
+
+  <footer class="footer container"><span class="text-xs text-muted">Live Autopilot · real-time monitoring demo</span></footer>
+
+  <!-- JavaScript -->
+  <script src="../src/js/config.js"></script>
+  <script src="../src/js/themes.js"></script>
+  <script src="../src/js/store.js"></script>
+  <script src="../src/js/utils/helpers.js"></script>
+  <script src="../src/js/modules/live-autopilot.js"></script>
+  <script src="../src/js/router.js"></script>
+  <script src="../src/js/mobile-menu.js"></script>
+  <script src="../src/js/settings.js"></script>
+  <script src="../src/js/app.js"></script>
+  <script src="../src/js/pages/autopilot.js"></script>
+</body>
+</html>

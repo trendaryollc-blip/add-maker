@@ -1,0 +1,350 @@
+/* ============================================================
+   OMNI — responsive.css
+   Complete responsive system for all devices.
+   ============================================================ */
+
+/* ---------- SETTINGS GEAR BUTTON ---------- */
+.settings-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s, transform 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.settings-btn:hover {
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
+  transform: rotate(30deg);
+}
+.settings-btn:active { transform: scale(0.95); }
+
+/* ---------- SETTINGS MODAL KEY ROWS ---------- */
+.settings-keys-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.settings-key-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(var(--accent-rgb), 0.03);
+}
+.settings-key-info {
+  flex: 0 0 120px;
+  min-width: 0;
+}
+.settings-key-info .form-label {
+  margin-bottom: 0;
+  font-size: 0.85rem;
+}
+.settings-key-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.settings-key-input .form-control {
+  flex: 1;
+  font-size: 0.85rem;
+}
+.settings-key-link {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--accent);
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.settings-key-link:hover {
+  background: rgba(var(--accent-rgb), 0.2);
+}
+@media (max-width: 560px) {
+  .settings-key-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
+  }
+  .settings-key-info {
+    flex: none;
+  }
+}
+
+/* ---------- HAMBURGER BUTTON (base: always hidden on desktop) ---------- */
+.burger {
+  display: none !important;
+}
+.burger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-primary);
+  margin: 3px 0;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.burger.active span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+.burger.active span:nth-child(2) { opacity: 0; }
+.burger.active span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+
+/* ---------- NAV (sibling of topbar, positioned inline on desktop) ---------- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 clamp(1rem, 4vw, 2.5rem);
+  background: var(--navbar-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.nav a {
+  color: var(--text-secondary);
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.nav a:hover { color: var(--text-primary); background: var(--hover); }
+.nav a.active {
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+/* ---------- NAV OVERLAY (base: always hidden) ---------- */
+.nav-overlay {
+  display: none !important;
+}
+.nav-overlay.open {
+  display: block !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 199 !important;
+}
+
+/* ---------- LARGE DESKTOP (1280px+) ---------- */
+@media (min-width: 1280px) {
+  .container { max-width: 1320px; }
+}
+
+/* ---------- SMALL-HEIGHT DESKTOP ---------- */
+@media (min-width: 1025px) and (max-height: 700px) {
+  .topbar { padding: 0.5rem 2rem; }
+  .nav { padding: 0 2rem; }
+  .section { padding: 2rem 0; }
+}
+
+/* ---------- TABLET (769px – 1024px) ---------- */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-5 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+  .col-span-3, .col-span-4, .col-span-5, .col-span-6,
+  .col-span-7, .col-span-8, .col-span-9 { grid-column: span 12; }
+  h1 { font-size: 2.6rem; }
+  h2 { font-size: 1.9rem; }
+  .metric-value { font-size: 1.6rem; }
+}
+
+/* ================================================================
+   MOBILE — 768px and below
+   ================================================================ */
+@media (max-width: 768px) {
+
+  /* ---- SHOW BURGER ---- */
+  .burger {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    padding: 0.5rem !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  /* ---- HIDE SIGN-IN BUTTON ---- */
+  .topbar .actions .btn { display: none !important; }
+
+  /* ---- NAV: HIDDEN by default on mobile ---- */
+  .nav {
+    display: none !important;
+  }
+
+  /* ---- NAV: SHOW as fixed panel when .open ---- */
+  .nav.open {
+    display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 280px !important;
+    max-width: 80vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    background: var(--bg-primary) !important;
+    border-right: 1px solid var(--border) !important;
+    border-bottom: none !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    padding: 1.5rem 1rem 2rem !important;
+    z-index: 200 !important;
+    overflow-y: auto !important;
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5) !important;
+    animation: slideInNav 0.25s ease !important;
+  }
+  @keyframes slideInNav {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+  .nav.open a {
+    padding: 0.85rem 1rem !important;
+    border-radius: 8px !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    border-bottom: 1px solid var(--border) !important;
+    color: var(--text-primary) !important;
+    pointer-events: auto !important;
+    transition: background 0.2s, color 0.2s !important;
+  }
+  .nav.open a:last-child { border-bottom: none !important; }
+  .nav.open a:hover,
+  .nav.open a.active {
+    background: rgba(var(--accent-rgb), 0.15) !important;
+    color: var(--accent) !important;
+  }
+
+  /* ---- GRID: all single column ---- */
+  .grid-cols-2, .grid-cols-3, .grid-cols-4, .grid-cols-5 {
+    grid-template-columns: 1fr !important;
+  }
+  .col-span-3, .col-span-4, .col-span-5, .col-span-6,
+  .col-span-7, .col-span-8, .col-span-9 { grid-column: span 12 !important; }
+
+  h1 { font-size: 2rem !important; line-height: 1.15 !important; }
+  h2 { font-size: 1.6rem !important; }
+  .section { padding: 2rem 0 !important; }
+  .input-group { flex-direction: column !important; }
+
+  /* Tables → card layout */
+  table thead { display: none !important; }
+  table, tbody, tr, td { display: block !important; width: 100% !important; }
+  tbody tr { border-bottom: 1px solid var(--border); margin-bottom: 0.5rem; padding-bottom: 0.5rem; }
+  tbody td {
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    text-align: right !important;
+    padding: 0.4rem 0 !important;
+  }
+  tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: left;
+  }
+
+  .card { padding: 1.15rem; }
+  .topbar { padding: 0.65rem 1rem; }
+}
+
+/* ================================================================
+   SMALL MOBILE — 480px and below
+   ================================================================ */
+@media (max-width: 480px) {
+  .nav.open { width: 260px !important; }
+
+  .grid { grid-template-columns: 1fr !important; }
+  .col-span-3, .col-span-4, .col-span-5, .col-span-6,
+  .col-span-7, .col-span-8, .col-span-9, .col-span-12 {
+    grid-column: span 1 !important;
+  }
+
+  h1 { font-size: 1.6rem !important; }
+  h2 { font-size: 1.3rem !important; }
+  h3 { font-size: 1.1rem !important; }
+  .topbar { padding: 0.5rem 0.65rem !important; }
+  .brand { font-size: 1rem !important; gap: 0.35rem !important; }
+  .brand .logo { width: 26px !important; height: 26px !important; font-size: 0.8rem !important; }
+  .btn { padding: 0.55rem 0.9rem !important; font-size: 0.85rem !important; }
+  .btn-lg { padding: 0.7rem 1.3rem !important; font-size: 0.9rem !important; }
+  .metric-value { font-size: 1.3rem !important; }
+  .container { padding: 0 0.75rem !important; }
+  .section { padding: 1.5rem 0 !important; }
+  .card { padding: 0.9rem !important; border-radius: 12px !important; }
+  .toast-container { left: 0.5rem !important; right: 0.5rem !important; max-width: calc(100vw - 1rem) !important; }
+  .modal { padding: 1rem !important; border-radius: 14px !important; }
+}
+
+/* ---------- LANDSCAPE ORIENTATION FIXES ---------- */
+@media (orientation: landscape) and (max-height: 500px) {
+  .auth-wrap { min-height: auto; padding: 1.5rem 1rem; }
+  .modal { max-height: 88vh; }
+}
+
+/* ---------- PRINT STYLES ---------- */
+@media print {
+  .topbar, .footer, .toast-container, .modal-overlay,
+  .theme-toggle, button, .btn, .burger, .nav-overlay,
+  .nav { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  .card, .metric {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    background: #fff !important;
+  }
+  * { box-shadow: none !important; text-shadow: none !important; }
+  a { color: #000; text-decoration: underline; }
+  .container { max-width: 100%; }
+}
+
+/* ---------- TOUCH DEVICE OPTIMIZATIONS ---------- */
+@media (hover: none) and (pointer: coarse) {
+  .btn, .nav a, .theme-toggle, .card { -webkit-tap-highlight-color: transparent; }
+  .btn:active { transform: scale(0.97); }
+  .animate-hover-glow:hover { transform: none; box-shadow: none; }
+  .flip-card:hover .flip-card-inner { transform: none; }
+  .card-hover:hover { transform: none; }
+  .topbar { position: sticky; }
+  input, select, textarea, button { font-size: 16px; }
+  a, button, .btn { touch-action: manipulation; }
+}
+
+/* ---------- REDUCED MOTION ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,344 @@
+/* ============================================================
+   OMNI — animations.css
+   Reusable animation utilities. Apply a class to trigger.
+   Prefer `animation` on elements already in the DOM; the
+   `.animate-*` classes below run once on load.
+   ============================================================ */
+
+/* ---------- 1. PARTICLE ANIMATION (floating particles) ----------
+   Wrap content in .particle-field and include spans with class
+   .particle for each floating dot.  */
+.particle-field { position: relative; overflow: hidden; }
+.particle {
+  position: absolute;
+  bottom: -10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  filter: drop-shadow(0 0 6px rgba(var(--accent-rgb), 0.9));
+  opacity: 0;
+  animation: omni-float-up var(--p-dur, 8s) linear infinite;
+  animation-delay: var(--p-delay, 0s);
+}
+@keyframes omni-float-up {
+  0%   { transform: translateY(0) translateX(0) scale(1);    opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { transform: translateY(-45vh) translateX(18px) scale(1.2); }
+  90%  { opacity: 0.7; }
+  100% { transform: translateY(-80vh) translateX(-12px) scale(0.6); opacity: 0; }
+}
+
+/* Shortcut: create particles purely via CSS on the element */
+.animate-particle { position: relative; }
+.animate-particle::before,
+.animate-particle::after {
+  content: "";
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), 0.9));
+  opacity: 0;
+  animation: omni-float-up var(--p-dur, 9s) linear infinite;
+}
+.animate-particle::before { left: 15%; animation-delay: 1s; }
+.animate-particle::after  { left: 75%; width: 5px; height: 5px; animation-delay: 4s; }
+
+/* ---------- 2. GLITCH TEXT EFFECT ---------- */
+.animate-glitch {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+.animate-glitch::before,
+.animate-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.animate-glitch::before {
+  text-shadow: -1px 0 var(--accent-3);
+  opacity: 0.4;
+  animation: omni-glitch-a 4s infinite steps(1) alternate-reverse;
+}
+.animate-glitch::after {
+  text-shadow: 1px 0 var(--accent);
+  opacity: 0.4;
+  animation: omni-glitch-b 4s infinite steps(1) alternate-reverse;
+}
+@keyframes omni-glitch-a {
+  0%   { clip-path: inset(40% 0 50% 0); }
+  5%   { clip-path: inset(10% 0 85% 0); }
+  10%  { clip-path: inset(0 0 100% 0); }
+  15%  { clip-path: inset(60% 0 20% 0); }
+  20%  { clip-path: inset(0 0 100% 0); }
+  25%  { clip-path: inset(80% 0 5% 0); }
+  30%  { clip-path: inset(0 0 100% 0); }
+  35%  { clip-path: inset(25% 0 60% 0); }
+  40%  { clip-path: inset(0 0 100% 0); }
+  100% { clip-path: inset(0 0 100% 0); }
+}
+@keyframes omni-glitch-b {
+  0%   { clip-path: inset(0 0 100% 0); }
+  5%   { clip-path: inset(70% 0 10% 0); }
+  10%  { clip-path: inset(0 0 100% 0); }
+  15%  { clip-path: inset(5% 0 80% 0); }
+  20%  { clip-path: inset(0 0 100% 0); }
+  25%  { clip-path: inset(50% 0 30% 0); }
+  30%  { clip-path: inset(0 0 100% 0); }
+  35%  { clip-path: inset(0 0 100% 0); }
+  40%  { clip-path: inset(15% 0 70% 0); }
+  45%  { clip-path: inset(0 0 100% 0); }
+  100% { clip-path: inset(0 0 100% 0); }
+}
+
+/* ---------- 3. NEON BORDER PULSE ---------- */
+.animate-neon-pulse {
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  animation: omni-neon-pulse 2s ease-in-out infinite;
+}
+@keyframes omni-neon-pulse {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(var(--accent-rgb), 0.5),
+                0 0 16px rgba(var(--accent-rgb), 0.35),
+                inset 0 0 6px rgba(var(--accent-rgb), 0.2);
+    border-color: var(--border-strong);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.9),
+                0 0 40px rgba(var(--accent-2-rgb), 0.5),
+                inset 0 0 12px rgba(var(--accent-rgb), 0.4);
+    border-color: var(--accent);
+  }
+}
+
+/* ---------- 4. 3D FLIP CARD ---------- */
+.flip-card {
+  perspective: 1200px;
+  width: 100%;
+}
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: var(--flip-h, 260px);
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.4, 0.1, 0.2, 1);
+}
+.flip-card:hover .flip-card-inner,
+.animate-flip-card .flip-card-inner {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  background: var(--card-bg);
+  text-align: center;
+}
+.flip-face-back {
+  transform: rotateY(180deg);
+  background: var(--gradient-brand);
+  color: var(--text-on-accent);
+}
+.flip-face-back h3,
+.flip-face-back p { color: var(--text-on-accent); }
+.animate-flip-card {
+  animation: omni-flip 5s ease-in-out infinite;
+}
+@keyframes omni-flip {
+  0%, 45%, 100% { transform: perspective(1200px) rotateY(0deg); }
+  60%, 85%      { transform: perspective(1200px) rotateY(180deg); }
+}
+
+/* ---------- 5. SLIDE-IN FROM SIDES ---------- */
+.animate-slide-left  { animation: omni-slide-left 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slide-right { animation: omni-slide-right 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slide-up    { animation: omni-slide-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes omni-slide-left  { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes omni-slide-right { from { opacity: 0; transform: translateX(60px); }  to { opacity: 1; transform: translateX(0); } }
+@keyframes omni-slide-up    { from { opacity: 0; transform: translateY(50px); }  to { opacity: 1; transform: translateY(0); } }
+
+/* Stagger helpers */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+/* ---------- 6. BOUNCE ENTRANCE ---------- */
+.animate-bounce {
+  animation: omni-bounce-in 0.9s cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+@keyframes omni-bounce-in {
+  0%   { opacity: 0; transform: scale(0.3) translateY(40px); }
+  55%  { opacity: 1; transform: scale(1.08) translateY(-6px); }
+  75%  { transform: scale(0.96) translateY(2px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+/* Continuous bounce (for arrows/indicators) */
+.animate-bounce-loop {
+  animation: omni-bounce-loop 1.4s ease-in-out infinite;
+}
+@keyframes omni-bounce-loop {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+/* ---------- 7. WAVE TEXT ANIMATION ----------
+   Requires each letter wrapped in <span> (usually generated by
+   the Utils.waveText helper in JS). */
+.wave-text { display: inline-block; white-space: pre; }
+.wave-text span {
+  display: inline-block;
+  animation: omni-wave 2s ease-in-out infinite;
+  animation-delay: var(--w-delay, 0s);
+}
+@keyframes omni-wave {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%           { transform: translateY(-0.45em); }
+}
+
+/* ---------- 8. GRADIENT BACKGROUND SHIFT ---------- */
+.animate-gradient-shift {
+  background: linear-gradient(120deg,
+              rgba(var(--accent-rgb), 0.25),
+              rgba(var(--accent-2-rgb), 0.25),
+              rgba(var(--accent-3-rgb), 0.25),
+              rgba(var(--accent-rgb), 0.25));
+  background-size: 300% 300%;
+  animation: omni-gradient-shift 8s ease infinite;
+}
+@keyframes omni-gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ---------- 9. TYPEWRITER EFFECT ----------
+   Placeholder cursor must be a real <span> or use a caret via
+   .typewriter-cursor. Works with the JS Utils.typewriter(). */
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--accent);
+  animation: omni-type-caret 0.8s step-end infinite;
+  max-width: 100%;
+}
+@keyframes omni-type-caret {
+  0%, 100% { border-color: var(--accent); }
+  50%      { border-color: transparent; }
+}
+
+/* ---------- 10. LOADING BAR WITH SHIMMER ---------- */
+.loading-bar {
+  position: relative;
+  height: 8px;
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.loading-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  border-radius: 8px;
+  background: var(--gradient-brand);
+  animation: omni-loading-shift 1.4s ease-in-out infinite;
+}
+@keyframes omni-loading-shift {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+/* Shimmer sweep (text rows / skeleton) */
+.animate-shimmer { position: relative; overflow: hidden; }
+.animate-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent,
+              rgba(255, 255, 255, 0.18), transparent);
+  animation: omni-shimmer 1.6s infinite;
+}
+@keyframes omni-shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* ---------- 11. HOVER SCALE WITH GLOW ---------- */
+.animate-hover-glow {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.animate-hover-glow:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 24px rgba(var(--accent-rgb), 0.55),
+              0 0 48px rgba(var(--accent-2-rgb), 0.3);
+  border-color: var(--accent);
+}
+
+/* ---------- 12. ROTATING 3D CUBE ---------- */
+.cube-scene {
+  width: var(--cube-size, 140px);
+  height: var(--cube-size, 140px);
+  margin: 0 auto;
+  perspective: 800px;
+}
+.cube {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: omni-cube-rotate 12s linear infinite;
+}
+.cube-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 2.2rem;
+  background: rgba(var(--accent-rgb), 0.12);
+  border: 1px solid rgba(var(--accent-rgb), 0.6);
+  color: var(--accent);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.cube .f1 { transform: rotateY(0deg)   translateZ(calc(var(--cube-size, 140px) / 2)); }
+.cube .f2 { transform: rotateY(90deg)  translateZ(calc(var(--cube-size, 140px) / 2)); }
+.cube .f3 { transform: rotateY(180deg) translateZ(calc(var(--cube-size, 140px) / 2)); }
+.cube .f4 { transform: rotateY(-90deg) translateZ(calc(var(--cube-size, 140px) / 2)); }
+.cube .f5 { transform: rotateX(90deg)  translateZ(calc(var(--cube-size, 140px) / 2)); }
+.cube .f6 { transform: rotateX(-90deg) translateZ(calc(var(--cube-size, 140px) / 2)); }
+@keyframes omni-cube-rotate {
+  0%   { transform: rotateX(0deg)    rotateY(0deg); }
+  25%  { transform: rotateX(0deg)    rotateY(90deg); }
+  50%  { transform: rotateX(90deg)   rotateY(90deg); }
+  75%  { transform: rotateX(90deg)   rotateY(180deg); }
+  100% { transform: rotateX(0deg)    rotateY(360deg); }
+}
+
+/* Pause animations for users that prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+  .animate-glitch::before, .animate-glitch::after { display: none; }
+}

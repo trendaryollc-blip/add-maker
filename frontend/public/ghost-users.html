@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghost Users | OMNI</title>
+  <meta name="description" content="Test your ad on 500 AI humans before spending a single dollar.">
+  <meta name="theme-color" content="#0a0a0f">
+  <link rel="icon" type="image/svg+xml" href="../src/assets/icons/favicon.svg">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="stylesheet" href="../src/css/animations.css">
+  <link rel="stylesheet" href="../src/css/themes.css">
+  <link rel="stylesheet" href="../src/css/responsive.css">
+  <!-- Page-specific CSS (not in main.css) -->
+  <style>
+    .ghost-page .section { padding-top: 2rem; padding-bottom: 2rem; }
+    .ghost-page h1 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); line-height: 1.15; margin-bottom: 0; }
+    .ghost-page .lead { font-size: 1rem; margin-bottom: 0; }
+    .ghost-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 0.6rem; }
+    .ghost {
+      aspect-ratio: 1; border-radius: 12px; display: grid; place-items: center;
+      font-size: 0.7rem; border: 1px solid var(--border); background: var(--card-bg);
+      transition: 0.25s ease;
+    }
+    .ghost.like { border-color: var(--success); color: var(--success); box-shadow: 0 0 10px rgba(var(--success-rgb), 0.4); }
+    .ghost.skip { opacity: 0.4; }
+    .journey-bar { display: flex; align-items: flex-end; gap: 4px; height: 140px; margin-top: 1rem; }
+    .journey-bar div { flex: 1; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, var(--accent), var(--accent-2)); }
+    .clickable-item { cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 8px; transition: background 0.2s, transform 0.15s; }
+    .clickable-item:hover { background: rgba(var(--accent-rgb), 0.1); transform: translateX(4px); }
+    .clickable-item:active { transform: scale(0.97); }
+
+    @media (max-width: 1024px) {
+      .ghost-page .col-span-4, .ghost-page .col-span-8 { grid-column: span 12; }
+    }
+    @media (max-width: 768px) {
+      .ghost-grid { grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 0.5rem; }
+      .ghost { font-size: 0.65rem; }
+      .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr !important; }
+      .journey-bar { height: 120px; }
+    }
+    @media (max-width: 480px) {
+      .ghost-grid { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 0.4rem; }
+      .ghost { font-size: 0.6rem; border-radius: 8px; }
+    }
+  </style>
+</head>
+<body class="bg-grid bg-radial ghost-page">
+  <header class="topbar">
+    <a class="brand" href="index.html" data-route="/"><span class="logo">◈</span>OMNI</a>
+    <div class="actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-sun">☀</span><span class="icon-moon">☾</span></button>
+      <a class="btn btn-sm btn-accent" href="login.html" data-route="/login">Sign in</a>
+      <button class="burger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <nav class="nav" id="main-nav">
+    <a href="index.html" data-page="index" data-route="/">Dashboard</a>
+    <a href="neural-scan.html" data-page="neural-scan" data-route="/neural-scan">Neural Scan</a>
+    <a href="reality-studio.html" data-page="reality-studio" data-route="/reality-studio">Reality Studio</a>
+    <a href="ghost-users.html" data-page="ghost-users" data-route="/ghost-users">Ghost Users</a>
+    <a href="autopilot.html" data-page="autopilot" data-route="/autopilot">Autopilot</a>
+    <a href="analytics.html" data-page="analytics" data-route="/analytics">Analytics</a>
+  </nav>
+  <div class="nav-overlay"></div>
+
+  <main class="section container">
+    <div class="grid grid-cols-12">
+      <!-- Left: heading + controls -->
+      <section class="col-span-4">
+        <span class="badge badge-accent mb-2">👻 HIVE-MIND GHOST USERS</span>
+        <h1 class="mb-2">Test your ad on <span class="gradient-text">500 digital humans</span> before spending a dollar.</h1>
+        <p class="lead mb-4">Simulate real audience reactions, emotional journeys and predictive CTR/CPC — all before launch.</p>
+
+        <div class="card">
+          <h4 class="mb-3">Simulation</h4>
+          <div class="form-group">
+            <label class="form-label" for="ghost-count">Ghost pool size</label>
+            <select class="form-control" id="ghost-count">
+              <option value="100">100</option>
+              <option value="500" selected>500</option>
+              <option value="1000">1000</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ad-duration">Ad length (s)</label>
+            <select class="form-control" id="ad-duration">
+              <option value="15" selected>15s</option>
+              <option value="30">30s</option>
+              <option value="60">60s</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-block btn-lg" id="sim-btn">▶ Run simulation</button>
+          <div class="loading-bar mt-4 hidden" id="sim-loading"></div>
+        </div>
+
+        <div class="card mt-4 hidden" id="predict-card">
+          <h4 class="mb-3">📈 Predicted metrics</h4>
+          <div id="predict-list" class="flex flex-col gap-3"></div>
+        </div>
+      </section>
+
+      <!-- Right: info + results -->
+      <section class="col-span-8">
+
+        <div class="card">
+          <h4 class="mb-3">🤖 What are Ghost Users?</h4>
+          <p class="text-sm text-muted mb-3">Ghost Users are AI-powered digital humans that simulate real audience behavior. Each ghost has a unique persona — age, interests, buying habits — and reacts to your ad just like a real person would.</p>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="text-center">
+              <div class="metric-value text-accent" style="font-size:1.5rem">500+</div>
+              <div class="text-xs text-muted">Unique personas</div>
+            </div>
+            <div class="text-center">
+              <div class="metric-value text-accent-2" style="font-size:1.5rem">12</div>
+              <div class="text-xs text-muted">Demographic segments</div>
+            </div>
+            <div class="text-center">
+              <div class="metric-value text-success" style="font-size:1.5rem">94%</div>
+              <div class="text-xs text-muted">Prediction accuracy</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 mt-4">
+          <div class="card">
+            <h4 class="mb-3">⚡ How It Works</h4>
+            <div class="flex flex-col gap-2">
+              <div class="clickable-item flex gap-3 items-center" data-info="Choose how many ghost users to simulate and your ad duration.">
+                <span class="badge badge-accent">1</span>
+                <div>
+                  <b class="text-sm">Configure simulation</b>
+                  <p class="text-xs text-muted">Set pool size and ad length</p>
+                </div>
+              </div>
+              <div class="clickable-item flex gap-3 items-center" data-info="OMNI's AI generates diverse personas and simulates their emotional journey through your ad.">
+                <span class="badge badge-accent">2</span>
+                <div>
+                  <b class="text-sm">AI runs the test</b>
+                  <p class="text-xs text-muted">500 ghosts watch your ad</p>
+                </div>
+              </div>
+              <div class="clickable-item flex gap-3 items-center" data-info="Get CTR, CPC, conversion rate, ROAS predictions and segment-by-segment breakdown.">
+                <span class="badge badge-accent">3</span>
+                <div>
+                  <b class="text-sm">Get predictions</b>
+                  <p class="text-xs text-muted">CTR, CPC, ROAS and more</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h4 class="mb-3">📊 Metrics You'll Get</h4>
+            <div class="flex flex-col gap-2 text-sm">
+              <div class="clickable-item flex items-center gap-2" data-info="Click-Through Rate — percentage of ghosts who clicked your CTA."><span class="text-accent">→</span> CTR prediction</div>
+              <div class="clickable-item flex items-center gap-2" data-info="Cost Per Click — estimated CPC based on engagement patterns."><span class="text-accent">→</span> CPC estimate</div>
+              <div class="clickable-item flex items-center gap-2" data-info="Conversion Rate — how many ghosts completed the desired action."><span class="text-success">→</span> Conversion rate</div>
+              <div class="clickable-item flex items-center gap-2" data-info="Return On Ad Spend — predicted revenue per dollar spent."><span class="text-success">→</span> ROAS projection</div>
+              <div class="clickable-item flex items-center gap-2" data-info="Emotional Journey — a second-by-second chart of audience emotional intensity."><span class="text-accent-2">→</span> Emotional journey</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <h4 class="mb-3">🎭 Ghost User Profiles</h4>
+          <p class="text-xs text-muted mb-3">Click a persona to see how it reacts to ads</p>
+          <div class="grid grid-cols-4 gap-2">
+            <div class="clickable-item card text-center" data-info="Tech-savvy, 25-34, high income. Responds to innovation and premium features." style="padding:0.8rem;">
+              <div style="font-size:1.5rem;">👨‍💻</div>
+              <div class="text-xs"><b>Tech Bro</b></div>
+              <div class="text-xs text-muted">25-34 · $80k+</div>
+            </div>
+            <div class="clickable-item card text-center" data-info="Budget-conscious parent, 30-45. Responds to value, durability, and family benefits." style="padding:0.8rem;">
+              <div style="font-size:1.5rem;">👩‍👧</div>
+              <div class="text-xs"><b>Budget Mom</b></div>
+              <div class="text-xs text-muted">30-45 · $40-70k</div>
+            </div>
+            <div class="clickable-item card text-center" data-info="Trend-focused Gen Z, 18-24. Responds to aesthetics, social proof, and FOMO." style="padding:0.8rem;">
+              <div style="font-size:1.5rem;">🧑‍🎨</div>
+              <div class="text-xs"><b>Gen Z Creator</b></div>
+              <div class="text-xs text-muted">18-24 · $20-50k</div>
+            </div>
+            <div class="clickable-item card text-center" data-info="Premium buyer, 35-55, high income. Responds to quality, exclusivity, and brand story." style="padding:0.8rem;">
+              <div style="font-size:1.5rem;">🥂</div>
+              <div class="text-xs"><b>Luxury Buyer</b></div>
+              <div class="text-xs text-muted">35-55 · $120k+</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4 hidden" id="info-banner">
+          <p class="text-sm" id="info-text"></p>
+        </div>
+
+        <!-- Simulation results (hidden until run) -->
+        <div class="card mt-4 hidden" id="score-card">
+          <div class="flex justify-between items-center">
+            <span class="card-title"><span class="icon">🏆</span> Ad performance score</span>
+            <span class="badge badge-success" id="seg-best">—</span>
+          </div>
+          <div class="flex items-center gap-5 mt-3">
+            <span class="metric-value" id="overall-score" style="font-size:3rem">—</span>
+            <div class="flex-1">
+              <div class="progress"><div class="progress-bar" id="score-bar"></div></div>
+              <p class="text-xs text-muted mt-2" id="score-note">Emotional journey + predicted conversion.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 mt-4">
+          <div class="card hidden" id="journey-card">
+            <h4 class="mb-2">🧭 Emotional journey</h4>
+            <p class="text-xs text-muted">Intensity over time (seconds)</p>
+            <div class="journey-bar" id="journey-bars"></div>
+            <p class="text-sm text-muted mt-3" id="dropoff"></p>
+          </div>
+          <div class="card hidden" id="segments-card">
+            <h4 class="mb-3">🎭 Segment performance</h4>
+            <div class="flex flex-col gap-3">
+              <div><span class="text-sm text-success">● Best:</span> <span class="text-sm" id="best-seg">—</span></div>
+              <div><span class="text-sm text-danger">● Worst:</span> <span class="text-sm" id="worst-seg">—</span></div>
+              <div class="divider"></div>
+              <p class="text-xs text-muted">Recommendation from OMNI's emotional analysis.</p>
+              <p class="text-sm" id="journey-rec">—</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4 hidden" id="ghost-grid-card">
+          <h4 class="mb-3">Avatar reactions <span class="text-muted text-sm" id="grid-count"></span></h4>
+          <div class="ghost-grid" id="ghost-grid"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer container"><span class="text-xs text-muted">Ghost Users · predictive AI simulation demo</span></footer>
+
+  <!-- JavaScript -->
+  <script src="../src/js/config.js"></script>
+  <script src="../src/js/themes.js"></script>
+  <script src="../src/js/store.js"></script>
+  <script src="../src/js/utils/helpers.js"></script>
+  <script src="../src/js/modules/ghost-users.js"></script>
+  <script src="../src/js/router.js"></script>
+  <script src="../src/js/mobile-menu.js"></script>
+  <script src="../src/js/settings.js"></script>
+  <script src="../src/js/app.js"></script>
+  <script src="../src/js/pages/ghost-users.js"></script>
+  <script src="../src/js/pages/ghost-users-interact.js"></script>
+</body>
+</html>

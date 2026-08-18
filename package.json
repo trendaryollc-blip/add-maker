@@ -1,0 +1,33 @@
+{
+  "name": "omni-ad-engine",
+  "version": "2.0.0",
+  "description": "OMNI — The Autonomous Ad Engine. AI-powered platform that scans products, builds 4D ads, simulates ghost shoppers, and optimizes campaigns autonomously.",
+  "private": true,
+  "type": "commonjs",
+  "license": "MIT",
+  "author": "OMNI Team <team@omni.ai>",
+  "keywords": [
+    "ads", "advertising", "ai", "ecommerce", "threejs",
+    "vanilla-js", "spa", "autonomous", "machine-learning"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node backend/server.js",
+    "serve": "node scripts/serve.js",
+    "server": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "test": "node --test tests/core.test.js backend/tests/api.test.js",
+    "test:backend": "node --test backend/tests/api.test.js",
+    "test:frontend": "node --test tests/core.test.js",
+    "validate": "node scripts/validate.js",
+    "qa": "node scripts/qa.js",
+    "audit": "node scripts/audit.js",
+    "lint": "echo 'No linter configured yet'",
+    "typecheck": "echo 'No type checker configured yet'",
+    "vercel-build": "echo 'Build step — no compilation needed'"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

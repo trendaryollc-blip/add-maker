@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neural Product Scan | OMNI</title>
+  <meta name="description" content="Scan any product URL to reveal its emotional DNA, competitors and winning ad hooks.">
+  <meta name="theme-color" content="#0a0a0f">
+  <link rel="icon" type="image/svg+xml" href="../src/assets/icons/favicon.svg">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="stylesheet" href="../src/css/animations.css">
+  <link rel="stylesheet" href="../src/css/themes.css">
+  <link rel="stylesheet" href="../src/css/responsive.css">
+  <!-- Page-specific CSS (not in main.css) -->
+  <style>
+    .scan-page .section { padding-top: 2rem; padding-bottom: 2rem; }
+    .scan-page .col-span-5 { display: flex; flex-direction: column; gap: 0.6rem; }
+    .scan-page .col-span-5 .badge { margin-bottom: 0; }
+    .scan-page .col-span-5 h1 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); line-height: 1.15; margin-bottom: 0; }
+    .scan-page .col-span-5 .lead { font-size: 1rem; margin-bottom: 0.5rem; }
+    .scan-visual { height: 200px; border-radius: 14px; display: grid; place-items: center; position: relative; overflow: hidden; }
+    .scan-status { display: grid; gap: 0.6rem; }
+    .scan-status .status-row { display: flex; justify-content: space-between; font-size: 0.85rem; }
+    .hook-chip { padding: 0.45rem 0.8rem; border-radius: 8px; background: rgba(var(--accent-2-rgb), 0.1); border: 1px solid rgba(var(--accent-2-rgb), 0.35); font-size: 0.85rem; }
+    .result-block { opacity: 0; transform: translateY(14px); transition: 0.5s ease; }
+    .result-block.show { opacity: 1; transform: translateY(0); }
+
+    .clickable-item { cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 8px; transition: background 0.2s, transform 0.15s; }
+    .clickable-item:hover { background: rgba(var(--accent-rgb), 0.1); transform: translateX(4px); }
+    .clickable-item:active { transform: scale(0.97); }
+    .step-item { cursor: pointer; padding: 0.5rem 0.6rem; border-radius: 8px; transition: background 0.2s, border-color 0.2s; border: 1px solid transparent; }
+    .step-item:hover { background: rgba(var(--accent-rgb), 0.08); border-color: rgba(var(--accent-rgb), 0.3); }
+    .step-item.active { background: rgba(var(--accent-rgb), 0.12); border-color: var(--accent); }
+
+    @media (max-width: 768px) {
+      .scan-page .grid-cols-12 { gap: 1rem; }
+      .scan-page .col-span-5, .scan-page .col-span-7 { grid-column: span 12; }
+      .scan-visual { height: 160px; }
+      .grid-cols-2 { grid-template-columns: 1fr !important; }
+    }
+    @media (max-width: 480px) {
+      .scan-page h1 { font-size: 1.6rem; }
+      .scan-visual { height: 130px; }
+      .input-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body class="bg-grid bg-radial scan-page">
+  <header class="topbar">
+    <a class="brand" href="index.html" data-route="/"><span class="logo">◈</span>OMNI</a>
+    <div class="actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-sun">☀</span><span class="icon-moon">☾</span></button>
+      <a class="btn btn-sm btn-accent" href="login.html" data-route="/login">Sign in</a>
+      <button class="burger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <nav class="nav" id="main-nav">
+    <a href="index.html" data-page="index" data-route="/">Dashboard</a>
+    <a href="neural-scan.html" data-page="neural-scan" data-route="/neural-scan">Neural Scan</a>
+    <a href="reality-studio.html" data-page="reality-studio" data-route="/reality-studio">Reality Studio</a>
+    <a href="ghost-users.html" data-page="ghost-users" data-route="/ghost-users">Ghost Users</a>
+    <a href="autopilot.html" data-page="autopilot" data-route="/autopilot">Autopilot</a>
+    <a href="analytics.html" data-page="analytics" data-route="/analytics">Analytics</a>
+  </nav>
+  <div class="nav-overlay"></div>
+
+  <main class="section container">
+    <div class="grid grid-cols-12">
+      <!-- Left: input -->
+      <section class="col-span-5">
+        <span class="badge badge-accent mb-3">🧠 NEURAL PRODUCT SCAN</span>
+        <div class="flex items-center gap-2 mb-2" id="scan-api-status"></div>
+        <h1 class="mb-3">Understand your product <span class="gradient-text">better than you do.</span></h1>
+        <p class="lead mb-5">Paste any e-commerce URL or product ID. OMNI extracts emotional DNA, spies on competitors and predicts winning hooks.</p>
+
+        <div class="card">
+          <div class="form-group">
+            <label class="form-label" for="scan-url">Product URL or ID</label>
+            <div class="input-group">
+              <input class="form-control" id="scan-url" type="url" placeholder="https://shop.example.com/product/wireless-headphones">
+              <button class="btn btn-primary" id="scan-btn">Scan →</button>
+            </div>
+            <p class="form-hint">Demo mode: any URL returns a simulated analysis.</p>
+          </div>
+          <div class="scan-visual animate-gradient-shift" id="scan-visual">
+            <span class="text-muted" id="scan-idle">🔍 Waiting for input…</span>
+          </div>
+        </div>
+        <div class="card mt-4 hidden" id="progress-card">
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-sm mono" id="progress-label">Scanning</span>
+            <span class="text-sm mono text-accent" id="progress-pct">0%</span>
+          </div>
+          <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+        </div>
+        </section>
+
+      <!-- Right: results -->
+      <section class="col-span-7" id="results-area">
+
+        <div class="card">
+          <h4 class="mb-3">⚡ How It Works</h4>
+          <div class="flex flex-col gap-2">
+            <div class="step-item flex gap-3 items-center" data-step="1">
+              <span class="badge badge-accent">1</span>
+              <div>
+                <b class="text-sm">Paste a product URL</b>
+                <p class="text-xs text-muted">Any e-commerce link — Shopify, Amazon, custom stores</p>
+              </div>
+            </div>
+            <div class="step-item flex gap-3 items-center" data-step="2">
+              <span class="badge badge-accent">2</span>
+              <div>
+                <b class="text-sm">OMNI scans the product</b>
+                <p class="text-xs text-muted">Extracts images, pricing, reviews, and positioning</p>
+              </div>
+            </div>
+            <div class="step-item flex gap-3 items-center" data-step="3">
+              <span class="badge badge-accent">3</span>
+              <div>
+                <b class="text-sm">Get your ad strategy</b>
+                <p class="text-xs text-muted">Emotional DNA, competitor analysis, and ready-to-use hooks</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 mt-4">
+          <div class="card">
+            <h4 class="mb-3">🛒 Supported Platforms</h4>
+            <div class="flex flex-col gap-1 text-sm">
+              <div class="clickable-item flex items-center gap-2" data-url="https://my-store.myshopify.com/products/wireless-headphones"><span class="text-accent">✓</span> Shopify</div>
+              <div class="clickable-item flex items-center gap-2" data-url="https://www.amazon.com/dp/B09XYZ1234"><span class="text-accent">✓</span> Amazon</div>
+              <div class="clickable-item flex items-center gap-2" data-url="https://woo-store.com/product/running-shoes"><span class="text-accent">✓</span> WooCommerce</div>
+              <div class="clickable-item flex items-center gap-2" data-url="https://www.etsy.com/listing/123456789/handmade-candle"><span class="text-accent">✓</span> Etsy</div>
+              <div class="clickable-item flex items-center gap-2" data-url="https://demo.store/product/premium-widget"><span class="text-accent">✓</span> Custom stores</div>
+            </div>
+          </div>
+          <div class="card">
+            <h4 class="mb-3">🧠 Scan Capabilities</h4>
+            <div class="flex flex-col gap-1 text-sm">
+              <div class="clickable-item flex items-center gap-2" data-info="Maps the emotional response your product triggers — joy, trust, urgency, FOMO — and quantifies each."><span class="text-accent-2">→</span> Emotional DNA mapping</div>
+              <div class="clickable-item flex items-center gap-2" data-info="Identifies top competitors, their ad spend, creative angles, and where they're weak."><span class="text-accent-2">→</span> Competitor spy intel</div>
+              <div class="clickable-item flex items-center gap-2" data-info="Builds a psychographic profile of your ideal buyer — age, income, interests, pain points."><span class="text-accent-2">→</span> Audience profiling</div>
+              <div class="clickable-item flex items-center gap-2" data-info="Generates 5+ proven ad hooks based on emotional triggers and competitor gaps."><span class="text-accent-2">→</span> Ad hook generation</div>
+              <div class="clickable-item flex items-center gap-2" data-info="Analyzes pricing position vs competitors and suggests optimal price anchoring."><span class="text-accent-2">→</span> Pricing analysis</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4 hidden" id="info-banner">
+          <p class="text-sm" id="info-text"></p>
+        </div>
+
+        <div class="card mt-4" id="res-summary" style="display:none;">
+          <div class="card-header">
+            <span class="card-title"><span class="icon">📦</span> Product Profile</span>
+            <span class="badge badge-success" id="res-confidence">New</span>
+          </div>
+          <div class="flex gap-4">
+            <div class="flex-1">
+              <h3 id="res-name">—</h3>
+              <p class="text-muted text-sm mt-2" id="res-url"></p>
+              <div class="flex gap-3 mt-3">
+                <span class="badge badge-accent-2" id="res-category">—</span>
+                <span class="badge" id="res-price">—</span>
+                <span class="badge badge-accent" id="res-rating">★ —</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 mt-4">
+          <div class="card" id="res-emotions" style="display:none;">
+            <h4 class="mb-3">❤️ Emotional triggers</h4>
+            <div id="emotion-list"></div>
+          </div>
+          <div class="card" id="res-audience" style="display:none;">
+            <h4 class="mb-3">🎯 Target audience</h4>
+            <div id="audience-list" class="text-sm"></div>
+          </div>
+        </div>
+
+        <div class="card mt-4" id="res-competitors" style="display:none;">
+          <h4 class="mb-3">🕵️ Competitor watch</h4>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Competitor</th><th>Strength</th><th>Weakness</th><th>Price</th><th>Ads seen</th></tr></thead>
+              <tbody id="comp-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mt-4" id="res-hooks" style="display:none;">
+          <h4 class="mb-3">💡 Recommended ad hooks</h4>
+          <div class="flex flex-col gap-3" id="hook-list"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer container"><span class="text-xs text-muted">Neural Product Scan · demo analysis</span></footer>
+
+  <!-- JavaScript -->
+  <script src="../src/js/config.js"></script>
+  <script src="../src/js/themes.js"></script>
+  <script src="../src/js/store.js"></script>
+  <script src="../src/js/utils/helpers.js"></script>
+  <script src="../src/js/modules/neural-scan.js"></script>
+  <script src="../src/js/router.js"></script>
+  <script src="../src/js/mobile-menu.js"></script>
+  <script src="../src/js/settings.js"></script>
+  <script>
+    (function() {
+      var el = document.getElementById('scan-api-status');
+      if (!el) return;
+      var S = window.OMNI_SETTINGS;
+      if (S && S.hasAnyKey && S.hasAnyKey()) {
+        var active = S.getActiveKey();
+        var names = { openai: 'OpenAI', anthropic: 'Anthropic', gemini: 'Gemini', mistral: 'Mistral', groq: 'Groq' };
+        el.innerHTML = '<span class="badge badge-success">● Live AI</span><span class="text-xs text-muted">Using ' + (names[active.provider] || active.provider) + '</span>';
+      } else {
+        el.innerHTML = '<span class="badge">● Demo mode</span><span class="text-xs text-muted">Add any API key in <button onclick="document.getElementById(\'open-settings\').click()" style="background:none;border:none;color:var(--accent);cursor:pointer;text-decoration:underline;padding:0;font-size:inherit;">Settings</button> for real analysis</span>';
+      }
+    })();
+  </script>
+  <script src="../src/js/app.js"></script>
+  <script src="../src/js/pages/neural-scan.js"></script>
+  <script src="../src/js/pages/neural-scan-interact.js"></script>
+</body>
+</html>

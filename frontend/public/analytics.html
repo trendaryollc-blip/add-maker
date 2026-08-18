@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics | OMNI</title>
+  <meta name="description" content="Mission control analytics — spend, revenue, ROAS and platform performance.">
+  <meta name="theme-color" content="#0a0a0f">
+  <link rel="icon" type="image/svg+xml" href="../src/assets/icons/favicon.svg">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="stylesheet" href="../src/css/animations.css">
+  <link rel="stylesheet" href="../src/css/themes.css">
+  <link rel="stylesheet" href="../src/css/responsive.css">
+  <!-- Page-specific CSS (not in main.css) -->
+  <style>
+    .analytics-page .section { padding-top: 2rem; padding-bottom: 2rem; }
+    .analytics-page h1 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); line-height: 1.15; margin-bottom: 0; }
+    .analytics-page .lead { font-size: 1rem; margin-bottom: 0; }
+    .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 200px; }
+    .bar-chart .col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .bar-chart .bar { width: 100%; max-width: 46px; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, var(--accent), var(--accent-2)); transition: height 0.8s ease; }
+    .bar-chart .lbl { font-size: 0.72rem; color: var(--text-secondary); }
+    .heat { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .heat .cell { height: 44px; border-radius: 8px; background: var(--bg-tertiary); display: grid; place-items: center; font-size: 0.7rem; }
+    .heat .cell.h { background: rgba(var(--success-rgb), 0.25); }
+    .heat .cell.m { background: rgba(var(--warning-rgb), 0.22); }
+    .heat .cell.l { background: rgba(var(--danger-rgb), 0.18); }
+
+    @media (max-width: 1024px) {
+      .analytics-page .col-span-8, .analytics-page .col-span-4 { grid-column: span 12; }
+    }
+    @media (max-width: 768px) {
+      .analytics-page .grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
+      .bar-chart { height: 160px; gap: 6px; }
+      .heat { gap: 4px; }
+      .heat .cell { height: 36px; font-size: 0.6rem; }
+    }
+    @media (max-width: 480px) {
+      .analytics-page .grid-cols-4 { grid-template-columns: 1fr !important; }
+      .bar-chart { height: 140px; gap: 4px; }
+      .bar-chart .bar { max-width: 30px; }
+      .heat { grid-template-columns: repeat(7, 1fr); gap: 3px; }
+      .heat .cell { height: 30px; font-size: 0.55rem; border-radius: 4px; }
+    }
+  </style>
+</head>
+<body class="bg-grid bg-radial analytics-page">
+  <header class="topbar">
+    <a class="brand" href="index.html" data-route="/"><span class="logo">◈</span>OMNI</a>
+    <div class="actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-sun">☀</span><span class="icon-moon">☾</span></button>
+      <a class="btn btn-sm btn-accent" href="login.html" data-route="/login">Sign in</a>
+      <button class="burger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <nav class="nav" id="main-nav">
+    <a href="index.html" data-page="index" data-route="/">Dashboard</a>
+    <a href="neural-scan.html" data-page="neural-scan" data-route="/neural-scan">Neural Scan</a>
+    <a href="reality-studio.html" data-page="reality-studio" data-route="/reality-studio">Reality Studio</a>
+    <a href="ghost-users.html" data-page="ghost-users" data-route="/ghost-users">Ghost Users</a>
+    <a href="autopilot.html" data-page="autopilot" data-route="/autopilot">Autopilot</a>
+    <a href="analytics.html" data-page="analytics" data-route="/analytics">Analytics</a>
+  </nav>
+  <div class="nav-overlay"></div>
+
+  <main class="section container">
+    <span class="badge badge-accent-2 mb-2">📊 ANALYTICS COCKPIT</span>
+    <h1>The nerve center of your <span class="gradient-text">advertising operation.</span></h1>
+    <p class="lead mt-1 mb-4">Real-time spend, revenue, ROAS and platform performance at a glance.</p>
+
+    <!-- KPI row -->
+    <div class="grid grid-cols-4" style="gap:0.75rem;">
+      <div class="card metric"><div class="metric-label">Total spend</div><div class="metric-value" id="k-spend">$1,840</div><span class="metric-delta delta-up">▲ 12%</span></div>
+      <div class="card metric"><div class="metric-label">Total revenue</div><div class="metric-value up" id="k-rev">$5,420</div><span class="metric-delta delta-up">▲ 31%</span></div>
+      <div class="card metric"><div class="metric-label">ROAS</div><div class="metric-value up" id="k-roas">2.95x</div><span class="metric-delta delta-up">▲ 0.4</span></div>
+      <div class="card metric"><div class="metric-label">Avg CPC</div><div class="metric-value" id="k-cpc">$0.42</div><span class="metric-delta delta-down">▼ 0.03</span></div>
+    </div>
+
+    <!-- Weekly performance bar chart -->
+    <div class="grid grid-cols-12 mt-4" style="gap:0.75rem;">
+      <section class="col-span-8">
+        <div class="card">
+          <div class="card-header"><span class="card-title"><span class="icon">📈</span> Weekly revenue</span><span class="badge">Last 7 days</span></div>
+          <div class="bar-chart" id="weekly-chart"><!-- bars injected --></div>
+        </div>
+        <div class="card mt-4">
+          <div class="card-header"><span class="card-title"><span class="icon">🔥</span> Performance heatmap</span><span class="badge badge-accent">Campaign × Day</span></div>
+          <div class="heat" id="heatmap"></div>
+        </div>
+      </section>
+      <section class="col-span-4">
+        <div class="card">
+          <h4 class="mb-3">🛰 Platform breakdown</h4>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Platform</th><th>ROAS</th></tr></thead>
+              <tbody id="platform-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <h4 class="mb-3">🕒 Optimal posting times</h4>
+          <div class="flex flex-col gap-3" id="posting-list"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer container"><span class="text-xs text-muted">Analytics · simulated data</span></footer>
+
+  <!-- JavaScript -->
+  <script src="../src/js/config.js"></script>
+  <script src="../src/js/themes.js"></script>
+  <script src="../src/js/store.js"></script>
+  <script src="../src/js/utils/helpers.js"></script>
+  <script src="../src/js/modules/platform-alchemy.js"></script>
+  <script src="../src/js/router.js"></script>
+  <script src="../src/js/mobile-menu.js"></script>
+  <script src="../src/js/settings.js"></script>
+  <script src="../src/js/app.js"></script>
+  <script src="../src/js/pages/analytics.js"></script>
+</body>
+</html>
