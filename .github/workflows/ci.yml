@@ -24,21 +24,29 @@ jobs:
           cache: 'npm'
 
       - name: Install backend dependencies
-        run: npm ci
+        run: npm install
         working-directory: backend
+        env:
+          SHARP_IGNORE_GLOBAL_LIBVIPS: '1'
 
       - name: Run validation
-        run: npm run validate
-        env:
-          MOCK_DATA: 'true'
+        run: node scripts/validate.js
 
-      - name: Run full test suite
-        run: npm test
+      - name: Run frontend tests
+        run: node --test tests/core.test.js
+
+      - name: Run backend tests
+        run: node --test backend/tests/api.test.js
         env:
           MOCK_DATA: 'true'
 
       - name: Run QA checks
-        run: npm run qa
+        run: |
+          node backend/server.js &
+          sleep 2
+          node serve.js &
+          sleep 2
+          node scripts/qa.js
         env:
           MOCK_DATA: 'true'
 

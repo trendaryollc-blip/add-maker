@@ -21,16 +21,16 @@ function get(url, opts) {
 (async () => {
   let failures = 0;
 
-  // 1. Root redirect works
+  // 1. Root serves index.html
   console.log('=== Frontend ===');
-  const rootRes = await fetch(FE + '/', { redirect: 'manual' });
-  const rootOk = rootRes.status === 302 && (rootRes.headers.get('location') || '').includes('/frontend/public/index.html');
-  console.log(`GET /  -> ${rootRes.status} redirect=${rootOk ? 'OK' : 'MISSING/BAD'}`);
+  const rootRes = await fetch(FE + '/');
+  const rootOk = rootRes.status === 200;
+  console.log(`GET /  -> ${rootRes.status} ${rootOk ? 'OK' : 'FAIL'}`);
   if (!rootOk) failures++;
 
   // 2. For every page, fetch it + every local asset over HTTP
   for (const page of pages) {
-    const url = `${FE}/frontend/public/${page}`;
+    const url = `${FE}/public/${page}`;
     const { status, body } = await get(url);
     if (status !== 200) { failures++; console.log(`PAGE [${page}] -> ${status}`); continue; }
     const refs = [...body.matchAll(/(?:src|href)=['"]([^'"]+)['"]/g)]
@@ -38,7 +38,7 @@ function get(url, opts) {
       .filter((h) => !/^(https?:)?\/\//.test(h) && !/^(data:|#)/.test(h));
     const missing = [];
     for (const ref of refs) {
-      const assetUrl = new URL(ref, `${FE}/frontend/public/`).toString();
+      const assetUrl = new URL(ref, `${FE}/public/`).toString();
       const a = await get(assetUrl);
       if (a.status !== 200) missing.push(`${ref} (${a.status})`);
     }
@@ -56,9 +56,13 @@ function get(url, opts) {
   if (h.status !== 200 || h.body.status !== 'ok') { failures++; console.log('health FAIL'); }
   else console.log(`GET /api/health -> ${h.status} ("${h.body.status}")`);
 
+  await get(`${BE}/api/auth/signup`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: 'qa@omni.ai', password: 'QAPassword123', name: 'QA Bot' })
+  });
   const login = await get(`${BE}/api/auth/login`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: 'qa@omni.ai' })
+    body: JSON.stringify({ email: 'qa@omni.ai', password: 'QAPassword123' })
   });
   const tok = login.body && login.body.token;
   console.log(`POST /api/auth/login -> ${login.status} token=${!!tok}`);
