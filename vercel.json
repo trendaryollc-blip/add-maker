@@ -7,7 +7,7 @@
       "use": "@vercel/node"
     },
     {
-      "src": "frontend/public/**",
+      "src": "frontend/**",
       "use": "@vercel/static"
     }
   ],
@@ -28,11 +28,15 @@
       "handle": "filesystem"
     },
     {
-      "src": "/(.*)",
-      "dest": "/frontend/public/$1"
+      "src": "/",
+      "dest": "/frontend/public/index.html"
+    },
+    {
+      "src": "/([^/]+)\\.html",
+      "dest": "/frontend/public/$1.html"
     }
   ],
-  "outputDirectory": "frontend/public",
+  "outputDirectory": "frontend",
   "env": {
     "NODE_ENV": "production",
     "MOCK_DATA": "true"
